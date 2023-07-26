@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { ContentState, Editor, EditorState } from "draft-js";
 import "draft-js/dist/Draft.css";
+import io from 'socket.io-client';
+
+const socket = io.connect("http://localhost:3001");
 
 const TextEditorComponent = () => {
   const [editorState, setEditorState] = React.useState(() =>
@@ -20,7 +23,16 @@ const TextEditorComponent = () => {
     }
   },[]);
 
+  useEffect(() => {
+    socket.on("received_editor_content", (data) => {
+        if (typeof data.editorContent === 'string') {
+            setEditorState(EditorState.createWithContent(ContentState.createFromText(data.editorContent)));
+        }
+    })
+  },[socket]);
+
   const handleContentChanges = (currentEditorState) => {
+    socket.emit("send_message",{editorContent: currentEditorState.getCurrentContent().getPlainText()});
     localStorage.setItem("currentContent",currentEditorState.getCurrentContent().getPlainText());
   }
 
