@@ -1,5 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
+import React from 'react';
 import TextEditorComponent from './components/EditorComponent/TextEditorComponent';
 
 const App = () => {
